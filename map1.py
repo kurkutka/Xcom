@@ -39,10 +39,10 @@ class XCOM:
         for x in range(30):
             for y in range(30):
                 if hero == 1:
-                    screen.blit(self.load_image('menut.png'), (960, 0))
-                    screen.blit(self.load_image('Heavy_support.png'), (choice_hero[1] * 32, choice_hero[0] * 32))
+                    screen.blit(menu, (960, 0))
+                    screen.blit(support, (choice_hero[1] * 32, choice_hero[0] * 32))
                 else:
-                    screen.blit(self.load_image('Heavy_support.png'), (choice_hero[1] * 32, choice_hero[0] * 32))
+                    screen.blit(support, (choice_hero[1] * 32, choice_hero[0] * 32))
                 if x == flag[1] and y == flag[0]:
                     screen.blit((tmxdata1.get_tile_image(0, 0, 0)), (flag[1] * 32, flag[0] * 32))
                 else:
@@ -65,27 +65,28 @@ class XCOM:
         if cell != None:
             print(cell[0], cell[1])
 
-    def load_image(self, name, colorkey=None):
-        fullname = os.path.join('data/Текстуры', name)
-        image = pygame.image.load(fullname)
-        return image
+
+def load_image(name):
+    fullname = os.path.join('data/Текстуры', name)
+    image = pygame.image.load(fullname)
+    return image
 
 
 board = XCOM(30, 30)
 running = True
 clock = pygame.time.Clock()
+menu = load_image('menut.png')
+support = load_image('Heavy_support.png')
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                print(event.pos)
                 board.get_click(event.pos)
                 s1 = [board.get_cell(event.pos)[0], board.get_cell(event.pos)[1]]
                 if s1 in s:
                     flag = s1
-                    print(flag)
                 if s1 == choice_hero:
                     if s1 not in s:
                         hero = 1
