@@ -8,7 +8,7 @@ pygame.init()
 size = width, height = 1200, 960
 screen = pygame.display.set_mode(size)
 running = True
-global s, flag, choice_hero, hero, error_tail, way, chlen
+global s, flag, choice_hero, hero, error_tail, way, choice_hero1, choice_hero2, choice_hero3
 s = [[2, 4], [2, 5], [2, 3], [3, 3], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2], [8, 2], [9, 2], [10, 2], [11, 2], [12, 2],
      [13, 2], [14, 2], [15, 2], [16, 2], [16, 3], [16, 5], [16, 6], [15, 6], [14, 6], [13, 6], [12, 6], [11, 6],
      [10, 6], [8, 6], [9, 6], [7, 6], [6, 6], [5, 6], [4, 6], [3, 6], [2, 5], [3, 5], [7, 6], [9, 9], [9, 10], [9, 11],
@@ -20,11 +20,13 @@ s = [[2, 4], [2, 5], [2, 3], [3, 3], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2], [8,
      [7, 17], [7, 19], [7, 20], [7, 21], [7, 21], [7, 22], [7, 23], [7, 24], [7, 25], [7, 25], [18, 14], [18, 15],
      [18, 16], [24, 19], [25, 19], [25, 18], [24, 18], [22, 7], [23, 7], [23, 6], [22, 6]]
 flag = [2000, 2000]
-choice_hero = [26, 11]
 hero = 0
 error_tail = 0
 way = 0
-chlen = 0
+choice_hero = [26, 11]  # саппорт
+choice_hero1 = [26, 10]  # штурмовик
+choice_hero2 = [27, 9]   # снайпер
+choice_hero3 = [27, 12]  # медик
 
 tmxdata = load_pygame("data/map1.tmx")
 tmxdata1 = load_pygame("data/Текстуры/red.tmx")
@@ -45,11 +47,18 @@ class XCOM:
     def render(self):
         for x in range(30):
             for y in range(30):
+                screen.blit(support, (choice_hero[1] * 32, choice_hero[0] * 32))
+                screen.blit(eng, (choice_hero1[1] * 32, choice_hero1[0] * 32))
+                screen.blit(sniper, (choice_hero2[1] * 32, choice_hero2[0] * 32))
+                screen.blit(medic, (choice_hero3[1] * 32, choice_hero3[0] * 32))
                 if hero == 1:
                     screen.blit(menu, (960, 0))
-                    screen.blit(support, (choice_hero[1] * 32, choice_hero[0] * 32))
-                else:
-                    screen.blit(support, (choice_hero[1] * 32, choice_hero[0] * 32))
+                elif hero == 2:
+                    screen.blit(menu, (960, 0))
+                elif hero == 3:
+                    screen.blit(menu, (960, 0))
+                elif hero == 4:
+                    screen.blit(menu, (960, 0))
                 if x == flag[1] and y == flag[0]:
                     screen.blit((tmxdata1.get_tile_image(0, 0, 0)), (flag[1] * 32, flag[0] * 32))
                 else:
@@ -92,6 +101,9 @@ running = True
 clock = pygame.time.Clock()
 menu = load_image1('menut.png')
 support = load_image('Heavy_support.png')
+eng = load_image('Engeniiiiiier.png')
+sniper = load_image('sniper.png')
+medic = load_image('medic.png')
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -102,7 +114,7 @@ while running:
                 s1 = [board.get_cell(event.pos)[0], board.get_cell(event.pos)[1]]
                 if s1 in s:
                     flag = s1
-                if s1 == choice_hero:
+                if s1 == choice_hero:  # support
                     if s1 not in s:
                         hero = 1
                         error_tail = 0
@@ -113,7 +125,47 @@ while running:
                         hero = 0
                         error_tail = 0
                         flag[0] = flag[0] + 1000
-                        chlen = 1
+                    else:
+                        error_tail = 1
+                if s1 == choice_hero1:  # eng
+                    if s1 not in s:
+                        hero = 2
+                        error_tail = 0
+                        choice_hero1 = s1
+                if s1 != choice_hero1 and hero == 2:
+                    if s1 not in s and Move.way(Move(), s, choice_hero1[1], choice_hero1[0], s1[1], s1[0]):
+                        choice_hero1 = s1
+                        hero = 0
+                        error_tail = 0
+                        flag[0] = flag[0] + 1000
+                    else:
+                        error_tail = 1
+
+                if s1 == choice_hero2:  # sniper
+                    if s1 not in s:
+                        hero = 3
+                        error_tail = 0
+                        choice_hero2 = s1
+                if s1 != choice_hero2 and hero == 3:
+                    if s1 not in s and Move.way(Move(), s, choice_hero2[1], choice_hero2[0], s1[1], s1[0]):
+                        choice_hero2 = s1
+                        hero = 0
+                        error_tail = 0
+                        flag[0] = flag[0] + 1000
+                    else:
+                        error_tail = 1
+
+                if s1 == choice_hero3:  # medic
+                    if s1 not in s:
+                        hero = 4
+                        error_tail = 0
+                        choice_hero3 = s1
+                if s1 != choice_hero3 and hero == 4:
+                    if s1 not in s and Move.way(Move(), s, choice_hero3[1], choice_hero3[0], s1[1], s1[0]):
+                        choice_hero3 = s1
+                        hero = 0
+                        error_tail = 0
+                        flag[0] = flag[0] + 1000
                     else:
                         error_tail = 1
 
