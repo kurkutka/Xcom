@@ -19,7 +19,6 @@ class Move:
             y1 = 4
             lab = self.voln(x1, y1, 1, 9, 9, lab)
             if lab[y2][x2] > 0 and lab[y2][x2] <= 5:
-                print(lab)
                 return True
             else:
                 return False

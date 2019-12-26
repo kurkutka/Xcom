@@ -8,7 +8,8 @@ pygame.init()
 size = width, height = 1200, 960
 screen = pygame.display.set_mode(size)
 running = True
-global s, flag, choice_hero, hero, error_tail, way, choice_hero1, choice_hero2, choice_hero3
+global s, flag, choice_hero, hero, error_tail, way, choice_hero1, choice_hero2, choice_hero3, flag_turn, flag_turn1, \
+    flag_turn2, flag_turn3, turn_enemy
 s = [[2, 4], [2, 5], [2, 3], [3, 3], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2], [8, 2], [9, 2], [10, 2], [11, 2], [12, 2],
      [13, 2], [14, 2], [15, 2], [16, 2], [16, 3], [16, 5], [16, 6], [15, 6], [14, 6], [13, 6], [12, 6], [11, 6],
      [10, 6], [8, 6], [9, 6], [7, 6], [6, 6], [5, 6], [4, 6], [3, 6], [2, 5], [3, 5], [7, 6], [9, 9], [9, 10], [9, 11],
@@ -27,6 +28,11 @@ choice_hero = [26, 11]  # саппорт
 choice_hero1 = [26, 10]  # штурмовик
 choice_hero2 = [27, 9]   # снайпер
 choice_hero3 = [27, 12]  # медик
+flag_turn = 0  # флаг хода саппорта
+flag_turn1 = 0  # флаг хода штурмовика
+flag_turn2 = 0  # флаг хода снайпера
+flag_turn3 = 0  # флаг хода медика
+turn_enemy = 0  # флаг хода клятых алиенов
 
 tmxdata = load_pygame("data/map1.tmx")
 tmxdata1 = load_pygame("data/Текстуры/red.tmx")
@@ -81,7 +87,7 @@ class XCOM:
 
     def on_click(self, cell):
         if cell != None:
-            print(cell[0], cell[1])
+            pass
 
 
 def load_image1(name):
@@ -99,6 +105,7 @@ def load_image(name):
 board = XCOM(30, 30)
 running = True
 clock = pygame.time.Clock()
+global_menu = load_image1('global_menu.png')
 menu = load_image1('menut.png')
 support = load_image('Heavy_support.png')
 eng = load_image('Engeniiiiiier.png')
@@ -111,7 +118,8 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 board.get_click(event.pos)
-                s1 = [board.get_cell(event.pos)[0], board.get_cell(event.pos)[1]]
+                if event.pos[0] <= 1024 and event.pos[1] <= 1024:
+                    s1 = [board.get_cell(event.pos)[0], board.get_cell(event.pos)[1]]
                 if s1 in s:
                     flag = s1
                 if s1 == choice_hero:  # support
@@ -120,9 +128,11 @@ while running:
                         error_tail = 0
                         choice_hero = s1
                 if s1 != choice_hero and hero == 1:
-                    if s1 not in s and Move.way(Move(), s, choice_hero[1], choice_hero[0], s1[1], s1[0]):
+                    if s1 not in s and Move.way(Move(), s, choice_hero[1], choice_hero[0], s1[1], s1[0]) \
+                            and flag_turn != 2 and s1 != choice_hero2 and s1 != choice_hero3 and s1 != choice_hero1:
                         choice_hero = s1
                         hero = 0
+                        flag_turn += 1
                         error_tail = 0
                         flag[0] = flag[0] + 1000
                     else:
@@ -133,9 +143,11 @@ while running:
                         error_tail = 0
                         choice_hero1 = s1
                 if s1 != choice_hero1 and hero == 2:
-                    if s1 not in s and Move.way(Move(), s, choice_hero1[1], choice_hero1[0], s1[1], s1[0]):
+                    if s1 not in s and Move.way(Move(), s, choice_hero1[1], choice_hero1[0], s1[1], s1[0]) \
+                            and flag_turn1 != 2 and s1 != choice_hero2 and s1 != choice_hero and s1 != choice_hero3:
                         choice_hero1 = s1
                         hero = 0
+                        flag_turn1 += 1
                         error_tail = 0
                         flag[0] = flag[0] + 1000
                     else:
@@ -147,10 +159,12 @@ while running:
                         error_tail = 0
                         choice_hero2 = s1
                 if s1 != choice_hero2 and hero == 3:
-                    if s1 not in s and Move.way(Move(), s, choice_hero2[1], choice_hero2[0], s1[1], s1[0]):
+                    if s1 not in s and Move.way(Move(), s, choice_hero2[1], choice_hero2[0], s1[1], s1[0]) \
+                            and flag_turn2 != 2 and s1 != choice_hero3 and s1 != choice_hero and s1 != choice_hero1:
                         choice_hero2 = s1
                         hero = 0
                         error_tail = 0
+                        flag_turn2 += 1
                         flag[0] = flag[0] + 1000
                     else:
                         error_tail = 1
@@ -161,13 +175,21 @@ while running:
                         error_tail = 0
                         choice_hero3 = s1
                 if s1 != choice_hero3 and hero == 4:
-                    if s1 not in s and Move.way(Move(), s, choice_hero3[1], choice_hero3[0], s1[1], s1[0]):
+                    if s1 not in s and Move.way(Move(), s, choice_hero3[1], choice_hero3[0], s1[1], s1[0]) \
+                            and flag_turn3 != 2 and s1 != choice_hero2 and s1 != choice_hero and s1 != choice_hero1:
                         choice_hero3 = s1
                         hero = 0
                         error_tail = 0
+                        flag_turn3 += 1
                         flag[0] = flag[0] + 1000
                     else:
                         error_tail = 1
+                if event.pos[0] > 1100 and event.pos[1] > 870:
+                    flag_turn = 0
+                    flag_turn1 = 0
+                    flag_turn2 = 0
+                    flag_turn3 = 0
+                    turn_enemy = 0
 
     screen.fill((0, 0, 0))
     board.render()
