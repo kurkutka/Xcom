@@ -2,6 +2,7 @@ import pygame
 from pytmx.util_pygame import load_pygame
 import os
 import math
+from move import Move
 
 pygame.init()
 size = width, height = 1200, 960
@@ -86,49 +87,6 @@ def load_image(name):
     return image
 
 
-def way(spis, x1, y1, x2, y2):
-    lab = []
-    ss = []
-    if abs(x2 - x1) > 4 or abs(y2 - y1) > 4:
-        return False
-    else:
-        for h in range(9):
-            for b in range(9):
-                if [(y1 - 4) + h, (x1 - 4) + b] not in spis:
-                    ss.append(0)
-                elif [(y1 - 4) + h, (x1 - 4) + b] in spis:
-                    ss.append(-1)
-            lab.append(ss)
-            ss = []
-        x2 = x2 - x1 + 4
-        y2 = y2 - y1 + 4
-        x1 = 4
-        y1 = 4
-        lab = voln(x1, y1, 1, 9, 9, lab)
-        print(y2, x2)
-        if lab[y2][x2] > 0:
-            return True
-        else:
-            return False
-
-
-def voln(x, y, cur, n, m, lab):
-    lab[x][y] = cur
-    if y + 1 < m:
-        if lab[x][y + 1] == 0 or (lab[x][y + 1] != -1 and lab[x][y + 1] > cur):
-            voln(x, y + 1, cur + 1, n, m, lab)
-    if x + 1 < n:
-        if lab[x + 1][y] == 0 or (lab[x + 1][y] != -1 and lab[x + 1][y] > cur):
-            voln(x + 1, y, cur + 1, n, m, lab)
-    if x - 1 >= 0:
-        if lab[x - 1][y] == 0 or (lab[x - 1][y] != -1 and lab[x - 1][y] > cur):
-            voln(x - 1, y, cur + 1, n, m, lab)
-    if y - 1 >= 0:
-        if lab[x][y - 1] == 0 or (lab[x][y - 1] != -1 and lab[x][y - 1] > cur):
-            voln(x, y - 1, cur + 1, n, m, lab)
-    return lab
-
-
 board = XCOM(30, 30)
 running = True
 clock = pygame.time.Clock()
@@ -150,7 +108,7 @@ while running:
                         error_tail = 0
                         choice_hero = s1
                 if s1 != choice_hero and hero == 1:
-                    if s1 not in s and way(s, choice_hero[1], choice_hero[0], s1[1], s1[0]):
+                    if s1 not in s and Move.way(Move(), s, choice_hero[1], choice_hero[0], s1[1], s1[0]):
                         choice_hero = s1
                         hero = 0
                         error_tail = 0
