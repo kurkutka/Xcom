@@ -3,13 +3,14 @@ from pytmx.util_pygame import load_pygame
 import os
 import math
 from move import Move
+from fire import Fire
 
 pygame.init()
 size = width, height = 1200, 960
 screen = pygame.display.set_mode(size)
 running = True
 global s, flag, choice_hero, hero, error_tail, way, choice_hero1, choice_hero2, choice_hero3, flag_turn, flag_turn1, \
-    flag_turn2, flag_turn3, turn_enemy
+    flag_turn2, flag_turn3, turn_enemy, choice_alien
 s = [[2, 4], [2, 5], [2, 3], [3, 3], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2], [8, 2], [9, 2], [10, 2], [11, 2], [12, 2],
      [13, 2], [14, 2], [15, 2], [16, 2], [16, 3], [16, 5], [16, 6], [15, 6], [14, 6], [13, 6], [12, 6], [11, 6],
      [10, 6], [8, 6], [9, 6], [7, 6], [6, 6], [5, 6], [4, 6], [3, 6], [2, 5], [3, 5], [7, 6], [9, 9], [9, 10], [9, 11],
@@ -24,18 +25,19 @@ flag = [2000, 2000]
 hero = 0
 error_tail = 0
 way = 0
-choice_hero = [26, 11]  # саппорт
-choice_hero1 = [26, 10]  # штурмовик
-choice_hero2 = [27, 9]   # снайпер
-choice_hero3 = [27, 12]  # медик
+choice_hero = [28, 11]  # саппорт
+choice_hero1 = [28, 10]  # штурмовик
+choice_hero2 = [29, 9]   # снайпер
+choice_hero3 = [29, 12]  # медик
 flag_turn = 0  # флаг хода саппорта
 flag_turn1 = 0  # флаг хода штурмовика
 flag_turn2 = 0  # флаг хода снайпера
 flag_turn3 = 0  # флаг хода медика
 turn_enemy = 0  # флаг хода клятых алиенов
+choice_alien = [[3, 4], [4, 3], [4, 5], [5, 9], [5, 11], [5, 17], [5, 19], [16, 21], [16, 23]]  # список клятых алиенов
 
-tmxdata = load_pygame("data/map1.tmx")
-tmxdata1 = load_pygame("data/Текстуры/red.tmx")
+
+tmxdata = load_pygame("data/map1.1.tmx")
 
 
 class XCOM:
@@ -53,6 +55,8 @@ class XCOM:
     def render(self):
         for x in range(30):
             for y in range(30):
+                for elem in choice_alien:
+                    screen.blit(sectoid, (elem[1] * 32, elem[0] * 32))
                 screen.blit(support, (choice_hero[1] * 32, choice_hero[0] * 32))
                 screen.blit(eng, (choice_hero1[1] * 32, choice_hero1[0] * 32))
                 screen.blit(sniper, (choice_hero2[1] * 32, choice_hero2[0] * 32))
@@ -66,11 +70,11 @@ class XCOM:
                 elif hero == 4:
                     screen.blit(menu, (960, 0))
                 if x == flag[1] and y == flag[0]:
-                    screen.blit((tmxdata1.get_tile_image(0, 0, 0)), (flag[1] * 32, flag[0] * 32))
+                    screen.blit(red, (flag[1] * 32, flag[0] * 32))
                 else:
                     screen.blit((tmxdata.get_tile_image(x, y, 0)), (x * 32, y * 32))
                 if error_tail == 1:
-                    screen.blit((tmxdata1.get_tile_image(0, 0, 0)), (s1[1] * 32, s1[0] * 32))
+                    screen.blit(red, (s1[1] * 32, s1[0] * 32))
 
     def get_cell(self, mouse_pos):
         if mouse_pos[0] < self.width * self.cell_size and \
@@ -111,6 +115,8 @@ support = load_image('Heavy_support.png')
 eng = load_image('Engeniiiiiier.png')
 sniper = load_image('sniper.png')
 medic = load_image('medic.png')
+red = load_image('red_sqr.png')
+sectoid = load_image('sectoid.png')
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -189,7 +195,17 @@ while running:
                     flag_turn1 = 0
                     flag_turn2 = 0
                     flag_turn3 = 0
-                    turn_enemy = 0
+                    turn_enemy = 1
+
+                if hero != 0 and s1 in choice_alien:
+                    if hero == 1:
+                        Fire.fire(Fire(), choice_hero[1], choice_hero[0], s1[1], s1[0], s)
+                    elif hero == 2:
+                        Fire.fire(Fire(), choice_hero1[1], choice_hero1[0], s1[1], s1[0], s)
+                    elif hero == 3:
+                        Fire.fire(Fire(), choice_hero2[1], choice_hero2[0], s1[1], s1[0], s)
+                    elif hero == 3:
+                        Fire.fire(Fire(), choice_hero3[1], choice_hero3[0], s1[1], s1[0], s)
 
     screen.fill((0, 0, 0))
     board.render()
