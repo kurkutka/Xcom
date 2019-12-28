@@ -1,27 +1,29 @@
+import numpy as np
+import datetime
+
+
 class Move:
-    def way(self, spis, x1, y1, x2, y2):
-        lab = []
-        ss = []
-        if abs(x2 - x1) > 4 or abs(y2 - y1) > 4:
+    def way(self, spis, x1, y1, x2, y2, move_distance):
+
+        lab = np.arange(move_distance ** 2)
+        lab = lab.reshape(move_distance, move_distance)
+        if abs(x2 - x1) > ((move_distance - 1) // 2) or abs(y2 - y1) > ((move_distance - 1) // 2):
             return False
         else:
-            for h in range(9):
-                for b in range(9):
-                    if [(y1 - 4) + h, (x1 - 4) + b] not in spis:
-                        ss.append(0)
-                    elif [(y1 - 4) + h, (x1 - 4) + b] in spis:
-                        ss.append(-1)
-                lab.append(ss)
-                ss = []
-            x2 = x2 - x1 + 4
-            y2 = y2 - y1 + 4
-            x1 = 4
-            y1 = 4
-            lab = self.voln(x1, y1, 1, 9, 9, lab)
-            if lab[y2][x2] > 0 and lab[y2][x2] <= 5:
-                return True
-            else:
-                return False
+
+            for h in range(move_distance):
+                for b in range(move_distance):
+                    if ((y1 - ((move_distance - 1) // 2)) + h, (x1 - ((move_distance - 1) // 2)) + b) not in spis:
+                        lab[h, b] = 0
+                    elif ((y1 - ((move_distance - 1) // 2)) + h, (x1 - ((move_distance - 1) // 2)) + b) in spis:
+                        lab[h, b] = -1
+
+            x2 = x2 - x1 + ((move_distance - 1) // 2)
+            y2 = y2 - y1 + ((move_distance - 1) // 2)
+            x1 = ((move_distance - 1) // 2)
+            y1 = ((move_distance - 1) // 2)
+            lab = self.voln(x1, y1, 1, move_distance, move_distance, lab)
+            return lab[y2][x2] > 0 and lab[y2][x2] <= ((move_distance + 1) // 2)
 
     def voln(self, x, y, cur, n, m, lab):
         lab[x][y] = cur

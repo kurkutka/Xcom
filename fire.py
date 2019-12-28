@@ -20,5 +20,4 @@ class Fire:
             elif glob_coords[0] < x2 * 32 and glob_coords[0] > (x2 * 32 - 32) \
                     and glob_coords[1] < y2 * 32 and glob_coords[1] > (y2 * 32 - 32):
                 return True
-                print(1)
         return False
