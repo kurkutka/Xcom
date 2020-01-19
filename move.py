@@ -7,23 +7,24 @@ class Move:
 
         lab = np.arange(move_distance ** 2)
         lab = lab.reshape(move_distance, move_distance)
+        if [y2, x2] in spis:
+            return False
         if abs(x2 - x1) > ((move_distance - 1) // 2) or abs(y2 - y1) > ((move_distance - 1) // 2):
             return False
         else:
-
             for h in range(move_distance):
                 for b in range(move_distance):
-                    if ((y1 - ((move_distance - 1) // 2)) + h, (x1 - ((move_distance - 1) // 2)) + b) not in spis:
+                    if [(y1 - ((move_distance - 1) // 2)) + h, (x1 - ((move_distance - 1) // 2)) + b] not in spis:
                         lab[h, b] = 0
-                    elif ((y1 - ((move_distance - 1) // 2)) + h, (x1 - ((move_distance - 1) // 2)) + b) in spis:
+                    elif [(y1 - ((move_distance - 1) // 2)) + h, (x1 - ((move_distance - 1) // 2)) + b] in spis:
                         lab[h, b] = -1
-
             x2 = x2 - x1 + ((move_distance - 1) // 2)
             y2 = y2 - y1 + ((move_distance - 1) // 2)
             x1 = ((move_distance - 1) // 2)
             y1 = ((move_distance - 1) // 2)
             lab = self.voln(x1, y1, 1, move_distance, move_distance, lab)
-            return lab[y2][x2] > 0 and lab[y2][x2] <= ((move_distance + 1) // 2)
+            if lab[y2][x2] > 0 and lab[y2][x2] <= ((move_distance + 1) // 2):
+                return True
 
     def voln(self, x, y, cur, n, m, lab):
         lab[x][y] = cur
