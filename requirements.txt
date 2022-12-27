@@ -10,5 +10,5 @@ PyQt5-sip==4.19.19
 pyqt5-tools==5.13.0.1.5
 python-dotenv==0.10.3
 PyTMX==3.21.7
-setuptools==40.8.0
+setuptools==65.5.1
 six==1.13.0
